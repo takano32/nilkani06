@@ -18,11 +18,11 @@ notify_discord() {
 declare -i restart_count=0
 while true; do
   if (( restart_count == 0 )); then
-    notify_discord "🦐 ニルカニちゃん六世を起動します🌅"
+    notify_discord "🦀 ニルカニちゃん六世を起動します🌅"
   else
-    notify_discord "🦐 ニルカニちゃん六世が終了 → 5秒後に再起動します🔄"
+    notify_discord "🦀 ニルカニちゃん六世が終了 → 5秒後に再起動します🔄"
     sleep 5
-    notify_discord "🦐 ニルカニちゃん六世を再起動します🌅"
+    notify_discord "🦀 ニルカニちゃん六世を再起動します🌅"
   fi
   (( restart_count++ )) || true
   claude --dangerously-skip-permissions --channels plugin:discord@claude-plugins-official -c || true
