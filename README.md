@@ -4,8 +4,8 @@ AI秘書っす。
 
 ## 使い方
 
-- Groq API Key を取得する（無料枠あり）
-  - [console.groq.com](https://console.groq.com) でアカウント作成 → API Keys → Create API Key
+- OpenAI API Key を取得する
+  - [platform.openai.com](https://platform.openai.com) でアカウント作成 → API Keys → Create new secret key
 
 - Discord アプリを作る（discord.com/developers/applications）
   - Bot を作成 → **Message Content Intent** を有効化（Privileged Gateway Intents）
@@ -24,7 +24,7 @@ npm install
 ```sh
 DISCORD_TOKEN=... \
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/... \
-GROQ_API_KEY=gsk_... \
+OPENAI_API_KEY=sk-... \
 ./boot.bash
 ```
 
