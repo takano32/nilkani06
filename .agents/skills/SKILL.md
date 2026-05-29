@@ -1,3 +1,8 @@
+---
+name: nilkani06-skills
+description: Skills and work patterns for the Nilkani06 Discord bot project (bot.js + boot.bash)
+---
+
 # SKILL.md — ニルカニちゃん六世 エージェントスキル定義
 
 このファイルは、Claude Code がこのリポジトリで作業する際に参照するスキル集。
