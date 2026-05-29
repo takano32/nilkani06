@@ -1,0 +1,12 @@
+{
+  "session": { "date": "2026-05-29", "time": "22:58:00", "agent": "Claude Sonnet 4.6" },
+  "summary": "ログ保存→push→self-kill を正しい順序で実行。",
+  "files_changed": [
+    { "path": ".agents/logs/2026-05-29_22-58-00.md", "op": "created", "note": "本セッションログ" },
+    { "path": ".agents/logs/2026-05-29_22-58-00.json", "op": "created", "note": "本セッションログ（ツール向け）" }
+  ],
+  "conversation": [
+    { "role": "user", "content": "ほんとにできる？" },
+    { "role": "assistant", "content": "ログ保存→push→self-kill を正しい順序で実行" }
+  ]
+}
