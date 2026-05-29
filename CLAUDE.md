@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## プロジェクト概要
 
-「ニルカニちゃん六世」は、Slack Bot 経由で ChatGPT (OpenAI API) を常時稼働させるための極小ラッパー。`bot.js` が Slack の Socket Mode でメッセージを受信し、OpenAI API を呼んで返信する。`boot.sh` がクラッシュ時の再起動ループと Slack への起動通知を担当する。
+「ニルカニちゃん六世」は、Slack Bot 経由で Groq API (Llama) を常時稼働させるための極小ラッパー。`bot.js` が Slack の Socket Mode でメッセージを受信し、Groq API を呼んで返信する。`boot.bash` がクラッシュ時の再起動ループと Slack への起動通知を担当する。
 
 ## 起動方法
 
@@ -14,11 +14,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 SLACK_BOT_TOKEN=xoxb-... \
 SLACK_APP_TOKEN=xapp-... \
 SLACK_NOTIFY_CHANNEL=C... \
-OPENAI_API_KEY=sk-... \
-./boot.sh
+GROQ_API_KEY=gsk-... \
+./boot.bash
 ```
 
-- `boot.sh` は `node bot.js` を無限ループで実行し、終了したら 5 秒待って再起動する。
+- `boot.bash` は `node bot.js` を無限ループで実行し、終了したら 5 秒待って再起動する。
 - 初回起動と再起動の各イベントを Slack にプッシュ通知する (`notify_slack` 関数)。
 - セッションファイルはプロセス起動ごとに `sessions/YYYY-MM-DD_HH-MM-SS.json` として生成される。
 
@@ -27,7 +27,7 @@ OPENAI_API_KEY=sk-... \
 - Node.js が導入されていること。
 - `npm install` で依存パッケージ (`@slack/bolt`, `openai`) をインストール済みであること。
 - Slack App が Socket Mode で設定済みであること。Bot Token (`xoxb-...`) と App Token (`xapp-...`) を取得しておく。
-- 環境変数 `SLACK_BOT_TOKEN` / `SLACK_APP_TOKEN` / `SLACK_NOTIFY_CHANNEL` / `OPENAI_API_KEY` を実際の値に置換する。
+- 環境変数 `SLACK_BOT_TOKEN` / `SLACK_APP_TOKEN` / `SLACK_NOTIFY_CHANNEL` / `GROQ_API_KEY` を実際の値に置換する。
 
 ## 環境変数
 
@@ -36,12 +36,12 @@ OPENAI_API_KEY=sk-... \
 | `SLACK_BOT_TOKEN` | Slack Bot Token (`xoxb-...`) |
 | `SLACK_APP_TOKEN` | Slack App-Level Token (`xapp-...`、Socket Mode 用) |
 | `SLACK_NOTIFY_CHANNEL` | 起動通知を送るチャンネル ID |
-| `OPENAI_API_KEY` | OpenAI API Key |
-| `OPENAI_MODEL` | 使用モデル（省略時: `gpt-4o`） |
+| `GROQ_API_KEY` | Groq API Key (`gsk_...`) |
+| `GROQ_MODEL` | 使用モデル（省略時: `llama-3.3-70b-versatile`） |
 | `SYSTEM_PROMPT` | システムプロンプト（省略時: デフォルト文言） |
 
 ## 編集時の注意
 
-- `boot.sh` は POSIX sh で書かれている (`#!/bin/sh`)。bash 固有構文を持ち込まないこと。
-- 認証情報は boot.sh にハードコードせず、必ず環境変数経由で渡す前提を崩さない。
+- `boot.bash` は `#!/usr/bin/env bash` で書かれている。bash 4.0 以上の記法 (`[[`, `local`, `set -euo pipefail` など) を使ってよい。
+- 認証情報は boot.bash にハードコードせず、必ず環境変数経由で渡す前提を崩さない。
 - `bot.js` はチャンネルごとに会話履歴を分離してコンテキストを構築している。セッションファイルには全チャンネルの発言が時系列で記録される。

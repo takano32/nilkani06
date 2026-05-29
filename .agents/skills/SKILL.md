@@ -11,9 +11,9 @@
 
 | スキル | 説明 |
 |---|---|
-| 会話継続 | チャンネルごとにセッション内の会話履歴を保持して OpenAI に渡す |
+| 会話継続 | チャンネルごとにセッション内の会話履歴を保持して Groq に渡す |
 | セッション保存 | 発言のたびに `sessions/YYYY-MM-DD_HH-MM-SS.json` へ追記 |
-| 再起動通知 | `boot.sh` が起動・再起動イベントを Slack に通知 |
+| 再起動通知 | `boot.bash` が起動・再起動イベントを Slack に通知 |
 | マルチチャンネル | 複数チャンネルを1プロセスで処理し、チャンネルごとに会話を分離 |
 
 ### 拡張パターン
@@ -23,16 +23,16 @@
 `SYSTEM_PROMPT` 環境変数で上書き可能。起動時に設定するだけでよい。
 
 ```sh
-SYSTEM_PROMPT="あなたはコードレビュー専門のAIです。" ./boot.sh
+SYSTEM_PROMPT="あなたはコードレビュー専門のAIです。" ./boot.bash
 ```
 
 #### モデルを切り替える
 
-`OPENAI_MODEL` 環境変数で指定。デフォルトは `gpt-4o`。
+`GROQ_MODEL` 環境変数で指定。デフォルトは `llama-3.3-70b-versatile`。
 
 ```sh
-OPENAI_MODEL=gpt-4o-mini ./boot.sh   # コスト削減
-OPENAI_MODEL=o1 ./boot.sh            # 推論特化
+GROQ_MODEL=llama-3.1-8b-instant ./boot.bash   # より高速・軽量
+GROQ_MODEL=mixtral-8x7b-32768 ./boot.bash     # コンテキスト長重視
 ```
 
 #### コマンドを追加する (`bot.js`)
@@ -62,9 +62,9 @@ Markdown は人間向け（会話ログ・変更一覧・技術メモ）、JSON 
 2. `README.md` — セットアップ手順（ユーザー向け）
 3. `.agents/skills/SKILL.md` — スキル定義（本ファイル）
 
-### boot.sh を編集するときの制約
+### boot.bash を編集するときの制約
 
-- `#!/bin/sh` (POSIX sh)。`bash` 固有構文（`[[`, `$(( ))` の一部, 配列など）は使わない。
+- `#!/usr/bin/env bash`、`set -euo pipefail` 必須。bash 4.0 以上の記法 (`[[`, `local`, 配列など) を積極的に使ってよい。
 - 認証情報は環境変数経由のみ。スクリプト内のデフォルト値はダミー文字列にとどめる。
 - Slack API 呼び出しは `--data-urlencode` を使った form-encoded 方式で JSON 組み立てを避ける。
 

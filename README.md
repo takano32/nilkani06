@@ -4,7 +4,8 @@ AI秘書っす。
 
 ## 使い方
 
-- OpenAI API Key を取得する（課金が必要）
+- Groq API Key を取得する（無料枠あり）
+  - [console.groq.com](https://console.groq.com) でアカウント作成 → API Keys → Create API Key
 
 - Slack App を作る（api.slack.com/apps）
   - Socket Mode を有効化 → App-Level Token (`xapp-...`) を取得
@@ -18,14 +19,14 @@ AI秘書っす。
 npm install
 ```
 
-- 環境変数を設定して boot.sh で起動する
+- 環境変数を設定して boot.bash で起動する
 
 ```sh
 SLACK_BOT_TOKEN=xoxb-... \
 SLACK_APP_TOKEN=xapp-... \
 SLACK_NOTIFY_CHANNEL=C... \
-OPENAI_API_KEY=sk-... \
-./boot.sh
+GROQ_API_KEY=gsk_... \
+./boot.bash
 ```
 
 - あとは、死ぬほど会話とかする

@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 
 const SESSIONS_DIR = path.join(__dirname, 'sessions');
-const MODEL = process.env.OPENAI_MODEL || 'gpt-4o';
+const MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
 const SYSTEM_PROMPT = process.env.SYSTEM_PROMPT || 'あなたは親切で有能なAIアシスタントです。';
 
 const app = new App({
@@ -15,7 +15,10 @@ const app = new App({
   socketMode: true,
 });
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const openai = new OpenAI({
+  apiKey: process.env.GROQ_API_KEY,
+  baseURL: 'https://api.groq.com/openai/v1',
+});
 
 // セッションファイルをプロセス起動時に作成
 if (!fs.existsSync(SESSIONS_DIR)) fs.mkdirSync(SESSIONS_DIR, { recursive: true });
