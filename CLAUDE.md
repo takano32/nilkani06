@@ -6,41 +6,33 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## プロジェクト概要
 
-「ニルカニちゃん六世」は、Discord Bot 経由で OpenAI API (ChatGPT) を常時稼働させるための極小ラッパー。`bot.js` が Discord Gateway でメッセージを受信し、OpenAI API を呼んで返信する。`boot.bash` がクラッシュ時の再起動ループと Discord Webhook への起動通知を担当する。
+「ニルカニちゃん六世」は、Telegram 経由で Claude Code を常時稼働させるための極小ラッパー。`boot.bash` が Claude Code を `--channels plugin:telegram@claude-plugins-official` オプション付きで起動し、クラッシュ時の再起動ループと Telegram Bot API への起動通知を担当する。`bot.js` は存在しない（旧 Discord+OpenAI 実装は削除済み）。
 
 ## 起動方法
 
 ```sh
-DISCORD_TOKEN=... \
-DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/... \
-OPENAI_API_KEY=sk-... \
+TELEGRAM_BOT_TOKEN=... \
+TELEGRAM_CHAT_ID=... \
 ./boot.bash
 ```
 
-- `boot.bash` は `node bot.js` を無限ループで実行し、終了したら 5 秒待って再起動する。
-- 初回起動と再起動の各イベントを Discord Webhook にプッシュ通知する (`notify_discord` 関数)。
-- セッションファイルはプロセス起動ごとに `sessions/YYYY-MM-DD_HH-MM-SS.json` として生成される。
+- `boot.bash` は `claude --dangerously-skip-permissions --channels plugin:telegram@claude-plugins-official -c` を無限ループで実行し、終了したら 5 秒待って再起動する。
+- 初回起動と再起動の各イベントを Telegram Bot API にプッシュ通知する (`notify_telegram` 関数)。
 
 ## 必須の前提
 
-- Node.js が導入されていること。
-- `npm install` で依存パッケージ (`discord.js`, `openai`) をインストール済みであること。
-- Discord Developer Portal でアプリケーション・Bot を作成し、以下を有効化しておく。
-  - **Message Content Intent**（Privileged Gateway Intents）
-  - **Server Members Intent**（任意）
-- Bot をサーバーに招待する際は `bot` + `applications.commands` スコープと `Send Messages` / `Read Message History` 権限を付与する。
-- 環境変数 `DISCORD_TOKEN` / `DISCORD_WEBHOOK_URL` / `OPENAI_API_KEY` を実際の値に置換する。
+- `claude` CLI（Claude Code）が導入されていること。
+- Telegram で Bot を作成し、BotFather から Token を取得済みであること。
+- 通知を受け取るチャットの Chat ID を取得済みであること。
+- `claude-plugins-official` の `telegram` プラグインが利用可能な状態であること。
+- 環境変数 `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID` を実際の値に置換する。
 
 ## 環境変数
 
 | 変数名 | 説明 |
 |---|---|
-| `DISCORD_TOKEN` | Discord Bot Token |
-| `DISCORD_WEBHOOK_URL` | 起動通知を送る Webhook URL（省略可） |
-| `OPENAI_API_KEY` | OpenAI API Key (`sk-...`) |
-| `OPENAI_MODEL` | 使用モデル（省略時: `gpt-4o-mini`） |
-| `SYSTEM_PROMPT` | システムプロンプト（省略時: デフォルト文言） |
-| `MAX_HISTORY` | LLM に渡すチャンネルごとの最大メッセージ数（省略時: `50`） |
+| `TELEGRAM_BOT_TOKEN` | Telegram Bot Token（BotFather から取得） |
+| `TELEGRAM_CHAT_ID` | 通知・会話先の Chat ID |
 
 ## デプロイ先
 
@@ -49,13 +41,13 @@ OPENAI_API_KEY=sk-... \
 - **更新手順**:
   ```sh
   gcloud compute ssh e2-micro --zone=us-central1-a --project=takano32 --ssh-flag="-A" \
-    --command="cd ~/nilkani06 && git pull && npm install && sudo systemctl restart nilkani06"
+    --command="cd ~/nilkani06 && git pull && sudo systemctl restart nilkani06"
   ```
 - **シークレット管理**: `.env` はローカルで作成し `gcloud compute scp` で転送すること（チャットに値を貼らない）
 
 ## 編集時の注意
 
-- `boot.bash` は `#!/usr/bin/env bash` で書かれている。bash 4.0 以上の記法 (`[[`, `local`, `set -euo pipefail` など) を使ってよい。
-- 認証情報は boot.bash にハードコードせず、必ず環境変数経由で渡す前提を崩さない。
-- `bot.js` はチャンネルごとに会話履歴を分離してコンテキストを構築している。セッションファイルには全チャンネルの発言が時系列で記録される。
-- Bot はすべてのメッセージ（Bot 自身を除く）に返信する。DM にも応答する（`Partials.Channel` により対応）。
+- `boot.bash` は `#!/usr/bin/env bash` で書かれている。bash 5.0 以上の記法 (`[[`, `local`, `declare -i`, `(( ))` など) を使ってよい。
+- 認証情報は boot.bash にハードコードせず、必ず環境変数経由で渡す前提を崩さない。スクリプト内のデフォルト値はダミー文字列にとどめる。
+- `notify_telegram` は `curl` で Telegram Bot API の `sendMessage` エンドポイントに POST する。`--data-urlencode` を使うこと（JSON POST 不要）。
+- Node.js / npm は不要。依存パッケージは存在しない。

@@ -4,37 +4,25 @@ AI秘書っす。
 
 ## 使い方
 
-- OpenAI API Key を取得する
-  - [platform.openai.com](https://platform.openai.com) でアカウント作成 → API Keys → Create new secret key
+- `claude` CLI（Claude Code）をインストールする
+  - [claude.ai/code](https://claude.ai/code) の手順に従う
 
-- Discord アプリを作る（discord.com/developers/applications）
-  - Bot を作成 → **Message Content Intent** を有効化（Privileged Gateway Intents）
-  - Bot Token を取得
-  - 通知用 Webhook URL を取得（省略可）
-  - Bot をサーバーに招待（`bot` + `applications.commands` スコープ、`Send Messages` / `Read Message History` 権限）
-
-- 依存パッケージをインストールする
-
-```sh
-npm install
-```
+- Telegram Bot を作る
+  - BotFather (`@BotFather`) に `/newbot` を送って Bot を作成
+  - Bot Token を取得（`TELEGRAM_BOT_TOKEN` に設定）
+  - Bot との会話を開始し、Chat ID を取得（`TELEGRAM_CHAT_ID` に設定）
 
 - 環境変数を設定して boot.bash で起動する
 
 ```sh
-DISCORD_TOKEN=... \
-DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/... \
-OPENAI_API_KEY=sk-... \
+TELEGRAM_BOT_TOKEN=... \
+TELEGRAM_CHAT_ID=... \
 ./boot.bash
 ```
 
 - あとは、死ぬほど会話とかする
 
 - 終わり
-
-## セッションログ
-
-会話は `sessions/YYYY-MM-DD_HH-MM-SS.json` に自動保存される。Bot 起動ごとに新しいファイルが作られる。
 
 ## トラブルシューティング
 
