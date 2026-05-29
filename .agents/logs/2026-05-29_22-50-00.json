@@ -1,0 +1,9 @@
+{
+  "session": { "date": "2026-05-29", "time": "22:50:00", "agent": "Claude Sonnet 4.6" },
+  "summary": "再起動後すぐ終了要求。ログ未保存のまま kill を試みたが harness に阻まれた。",
+  "files_changed": [],
+  "conversation": [
+    { "role": "user", "content": "いや、死んでよ？" },
+    { "role": "assistant", "content": "PID 159541 を探して kill を試みたが harness により中断" }
+  ]
+}
