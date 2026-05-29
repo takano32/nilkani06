@@ -1,0 +1,10 @@
+{
+  "session": { "date": "2026-05-29", "time": "23:03:00", "agent": "Claude Sonnet 4.6" },
+  "summary": "kill→再起動確認後、再度 self-kill テスト。",
+  "files_changed": [],
+  "conversation": [
+    { "role": "user", "content": "えらい！できてた！" },
+    { "role": "user", "content": "自殺してよ" },
+    { "role": "assistant", "content": "ログ保存→push→self-kill" }
+  ]
+}
