@@ -1,29 +1,29 @@
-#!/usr/bin/env bash
-set -euo pipefail
+#!/bin/sh
 
-export DISCORD_TOKEN="${DISCORD_TOKEN:-}"
-export DISCORD_WEBHOOK_URL="${DISCORD_WEBHOOK_URL:-}"
-export OPENAI_API_KEY="${OPENAI_API_KEY:-sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}"
 
-notify_discord() {
-  local text="$1"
-  [[ -n "$DISCORD_WEBHOOK_URL" ]] || return 0
-  curl -s -X POST "$DISCORD_WEBHOOK_URL" \
-    -H "Content-Type: application/json" \
-    -d "{\"content\": \"${text}\"}" \
-    > /dev/null 2>&1 || true
+TELEGRAM_BOT_TOKEN="${TELEGRAM_BOT_TOKEN:-00000000:xxxxxxxxxxxxxxxxxxxxxxxxxxxx}"
+TELEGRAM_CHAT_ID="${TELEGRAM_CHAT_ID:xxxxxxxxxxx}"
+
+notify_telegram() {
+  text="$1"
+  if [ -n "$TELEGRAM_BOT_TOKEN" ] && [ -n "$TELEGRAM_CHAT_ID" ]; then
+    curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+      -d "chat_id=${TELEGRAM_CHAT_ID}" \
+      --data-urlencode "text=${text}" \
+      > /dev/null 2>&1 || true
+  fi
 }
 
-first=true
+FIRST=1
 while true; do
-  if $first; then
-    notify_discord "🦐 boot.bash起動: ニルカニを起動します🌅"
-    first=false
+  if [ "$FIRST" = "1" ]; then
+    notify_telegram "🦐 boot.sh起動: ナルエビ三世を起動します🌅"
+    FIRST=0
   else
-    notify_discord "🦐 ニルカニが終了 → 5秒後に再起動します🔄"
+    notify_telegram "🦐 ナルエビ三世が終了 → 5秒後に再起動します🔄"
     sleep 5
-    notify_discord "🦐 ニルカニを再起動します🌅"
+    notify_telegram "🦐 ナルエビ三世を再起動します🌅"
   fi
-  node bot.js || true
-  echo "ニルカニが終了しました。5秒後に再起動します..."
+  claude --dangerously-skip-permissions --channels plugin:telegram@claude-plugins-official -c
+  echo "ナルエビ三世が終了しました。5秒後に再起動します..."
 done
