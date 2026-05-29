@@ -2,28 +2,46 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+@.agents/AGENTS.md
+
 ## プロジェクト概要
 
-「ナルエビちゃん三世」は、Claude Code を Telegram Bot 経由で常時稼働させるための極小ラッパー。リポジトリ本体には Bot ロジックは存在せず、`claude` CLI を `claude-plugins-official` の `plugin:telegram` チャンネルに繋いで起動・再起動するだけのシェルスクリプトで構成されている。
+「ニルカニちゃん六世」は、Slack Bot 経由で ChatGPT (OpenAI API) を常時稼働させるための極小ラッパー。`bot.js` が Slack の Socket Mode でメッセージを受信し、OpenAI API を呼んで返信する。`boot.sh` がクラッシュ時の再起動ループと Slack への起動通知を担当する。
 
 ## 起動方法
 
 ```sh
-TELEGRAM_BOT_TOKEN=... TELEGRAM_CHAT_ID=... ./boot.sh
+SLACK_BOT_TOKEN=xoxb-... \
+SLACK_APP_TOKEN=xapp-... \
+SLACK_NOTIFY_CHANNEL=C... \
+OPENAI_API_KEY=sk-... \
+./boot.sh
 ```
 
-- `boot.sh` は `claude --dangerously-skip-permissions --channels plugin:telegram@claude-plugins-official -c` を無限ループで実行し、終了したら 5 秒待って再起動する。
-- 初回起動と再起動の各イベントを Telegram にプッシュ通知する (`notify_telegram` 関数)。
-- `-c` フラグで前回セッションを継続するため、会話状態は Claude Code 側のセッション履歴に依存する。
+- `boot.sh` は `node bot.js` を無限ループで実行し、終了したら 5 秒待って再起動する。
+- 初回起動と再起動の各イベントを Slack にプッシュ通知する (`notify_slack` 関数)。
+- セッションファイルはプロセス起動ごとに `sessions/YYYY-MM-DD_HH-MM-SS.json` として生成される。
 
 ## 必須の前提
 
-- Claude Code が CLI として導入されていること (Max プラン等の課金が前提と README に記載)。
-- `claude-plugins-official` 配下の Telegram プラグインが設定済みであること。Bot 作成は BotFather で行う。
-- 環境変数 `TELEGRAM_BOT_TOKEN` と `TELEGRAM_CHAT_ID` を実際の値に置換する (boot.sh 内のデフォルト値はダミー)。
+- Node.js が導入されていること。
+- `npm install` で依存パッケージ (`@slack/bolt`, `openai`) をインストール済みであること。
+- Slack App が Socket Mode で設定済みであること。Bot Token (`xoxb-...`) と App Token (`xapp-...`) を取得しておく。
+- 環境変数 `SLACK_BOT_TOKEN` / `SLACK_APP_TOKEN` / `SLACK_NOTIFY_CHANNEL` / `OPENAI_API_KEY` を実際の値に置換する。
+
+## 環境変数
+
+| 変数名 | 説明 |
+|---|---|
+| `SLACK_BOT_TOKEN` | Slack Bot Token (`xoxb-...`) |
+| `SLACK_APP_TOKEN` | Slack App-Level Token (`xapp-...`、Socket Mode 用) |
+| `SLACK_NOTIFY_CHANNEL` | 起動通知を送るチャンネル ID |
+| `OPENAI_API_KEY` | OpenAI API Key |
+| `OPENAI_MODEL` | 使用モデル（省略時: `gpt-4o`） |
+| `SYSTEM_PROMPT` | システムプロンプト（省略時: デフォルト文言） |
 
 ## 編集時の注意
 
-- スクリプトは POSIX sh で書かれている (`#!/bin/sh`)。bash 固有構文を持ち込まないこと。
+- `boot.sh` は POSIX sh で書かれている (`#!/bin/sh`)。bash 固有構文を持ち込まないこと。
 - 認証情報は boot.sh にハードコードせず、必ず環境変数経由で渡す前提を崩さない。
-- `--dangerously-skip-permissions` を外す変更は挙動を大きく変えるため、ユーザー確認を取ること。
+- `bot.js` はチャンネルごとに会話履歴を分離してコンテキストを構築している。セッションファイルには全チャンネルの発言が時系列で記録される。

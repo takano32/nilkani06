@@ -1,0 +1,13 @@
+{
+  "name": "nilkanichan",
+  "version": "1.0.0",
+  "description": "Slack + ChatGPT bot wrapper",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "@slack/bolt": "^4",
+    "openai": "^4"
+  }
+}
