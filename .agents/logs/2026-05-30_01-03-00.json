@@ -1,0 +1,12 @@
+{
+  "session": { "date": "2026-05-30", "time": "01:03:00", "agent": "Claude Sonnet 4.6" },
+  "summary": "再起動後の短いセッション。前セッションログの commit 確認のみ。",
+  "files_changed": [
+    { "path": ".agents/logs/2026-05-30_01-03-00.md", "op": "created", "note": "本セッションログ" },
+    { "path": ".agents/logs/2026-05-30_01-03-00.json", "op": "created", "note": "本セッションログ（ツール向け）" }
+  ],
+  "conversation": [
+    { "role": "user", "content": "log, add, commit, push" },
+    { "role": "assistant", "content": "前セッション（01:02）ログが自動commit済み確認。本セッション分を作成・push。" }
+  ]
+}
