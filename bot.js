@@ -1,6 +1,6 @@
 'use strict';
 
-const { App } = require('@slack/bolt');
+const { Client, GatewayIntentBits, Partials } = require('discord.js');
 const OpenAI = require('openai');
 const fs = require('fs');
 const path = require('path');
@@ -8,11 +8,16 @@ const path = require('path');
 const SESSIONS_DIR = path.join(__dirname, 'sessions');
 const MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
 const SYSTEM_PROMPT = process.env.SYSTEM_PROMPT || 'あなたは親切で有能なAIアシスタントです。';
+const MAX_HISTORY = parseInt(process.env.MAX_HISTORY || '50', 10);
 
-const app = new App({
-  token: process.env.SLACK_BOT_TOKEN,
-  appToken: process.env.SLACK_APP_TOKEN,
-  socketMode: true,
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.DirectMessages,
+  ],
+  partials: [Partials.Channel],
 });
 
 const openai = new OpenAI({
@@ -20,8 +25,19 @@ const openai = new OpenAI({
   baseURL: 'https://api.groq.com/openai/v1',
 });
 
-// セッションファイルをプロセス起動時に作成
 if (!fs.existsSync(SESSIONS_DIR)) fs.mkdirSync(SESSIONS_DIR, { recursive: true });
+
+function loadPastSessions(currentFile) {
+  return fs.readdirSync(SESSIONS_DIR)
+    .filter(f => f.endsWith('.json') && f !== currentFile)
+    .sort()
+    .flatMap(f => {
+      try {
+        const data = JSON.parse(fs.readFileSync(path.join(SESSIONS_DIR, f), 'utf8'));
+        return Array.isArray(data.messages) ? data.messages : [];
+      } catch (_) { return []; }
+    });
+}
 
 const sessionStart = new Date();
 const pad = n => String(n).padStart(2, '0');
@@ -36,7 +52,8 @@ const sessionFilename = [
 ].join('-') + '.json';
 const sessionFile = path.join(SESSIONS_DIR, sessionFilename);
 
-// { timestamp, channel, role, content }[]
+// 過去セッション（読み取り専用）と現セッション（保存対象）を分離
+const pastMessages = loadPastSessions(sessionFilename);
 let allMessages = [];
 
 function saveSession() {
@@ -48,19 +65,19 @@ function saveSession() {
 
 saveSession();
 
-app.message(async ({ message, say }) => {
-  if (message.subtype || message.bot_id) return;
+client.on('messageCreate', async (message) => {
+  if (message.author.bot) return;
 
-  const text = message.text || '';
-  const channelId = message.channel;
+  const text = message.content || '';
+  const channelId = message.channelId;
 
   allMessages.push({ timestamp: new Date().toISOString(), channel: channelId, role: 'user', content: text });
   saveSession();
 
-  // チャンネルごとの会話履歴を OpenAI に渡す
-  const channelHistory = allMessages
+  const channelHistory = [...pastMessages, ...allMessages]
     .filter(m => m.channel === channelId)
-    .map(m => ({ role: m.role, content: m.content }));
+    .slice(-MAX_HISTORY)
+    .map(({ role, content }) => ({ role, content }));
 
   let reply;
   try {
@@ -77,10 +94,11 @@ app.message(async ({ message, say }) => {
   allMessages.push({ timestamp: new Date().toISOString(), channel: channelId, role: 'assistant', content: reply });
   saveSession();
 
-  await say(reply);
+  await message.reply(reply);
 });
 
-(async () => {
-  await app.start();
-  console.log(`起動完了: sessions/${sessionFilename}`);
-})();
+client.once('ready', () => {
+  console.log(`起動完了: ${client.user.tag} sessions/${sessionFilename}`);
+});
+
+client.login(process.env.DISCORD_TOKEN);
