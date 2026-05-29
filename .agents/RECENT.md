@@ -9,16 +9,14 @@
   - `boot.bash` — 無限再起動ループ + Discord Webhook 通知
 - **環境変数**: `DISCORD_TOKEN` / `DISCORD_WEBHOOK_URL` / `GROQ_API_KEY` / `GROQ_MODEL` / `SYSTEM_PROMPT` / `MAX_HISTORY`
 - **セッション保存**: `sessions/YYYY-MM-DD_HH-MM-SS.json`（.gitignore 済み）
-- **履歴復元**: 起動時に過去 sessions/*.json を読み込み、チャンネルごとに直近 MAX_HISTORY 件を Groq に渡す
-- **エージェント文脈**: セッション終了時に `.agents/RECENT.md` を上書き → 次セッション開始時に AGENTS.md 経由で自動ロード
+- **デプロイ先**: GCP e2-micro / プロジェクト: takano32 / ゾーン: us-central1-a / Debian 13 / 外部IP: 136.119.31.175
+- **サービス管理**: systemd (`nilkani06.service`, `Restart=always`, `EnvironmentFile=~/nilkani06/.env`)
 
 ## 直近の変更
 
-- Slack Bot → Discord Bot へ全面移行（bot.js・boot.bash・package.json・CLAUDE.md）
-- `loadPastSessions()` を実装し、再起動をまたいだ会話継続を実現（MAX_HISTORY で上限制御）
-- `.agents/RECENT.md` を導入し AGENTS.md から `@` インクルード → 次セッションに文脈を自動引き継ぎ
-- SKILL.md・AGENTS.md のセッション終了手順を RECENT.md 上書きも含む形に更新
+- README.md の Slack 記述を Discord に全面修正
+- GCP e2-micro インスタンス作成・Node.js 22 インストール・リポジトリクローン・systemd 登録完了
 
 ## 次のセッションへの申し送り
 
-特になし。
+特になし。本番稼働中。

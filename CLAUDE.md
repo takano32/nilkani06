@@ -42,6 +42,17 @@ GROQ_API_KEY=gsk_... \
 | `SYSTEM_PROMPT` | システムプロンプト（省略時: デフォルト文言） |
 | `MAX_HISTORY` | LLM に渡すチャンネルごとの最大メッセージ数（省略時: `50`） |
 
+## デプロイ先
+
+- **GCP e2-micro** / プロジェクト: `takano32` / ゾーン: `us-central1-a` / Debian 13
+- **サービス管理**: systemd (`nilkani06.service`)、`EnvironmentFile=~/nilkani06/.env`
+- **更新手順**:
+  ```sh
+  gcloud compute ssh e2-micro --zone=us-central1-a --project=takano32 --ssh-flag="-A" \
+    --command="cd ~/nilkani06 && git pull && npm install && sudo systemctl restart nilkani06"
+  ```
+- **シークレット管理**: `.env` はローカルで作成し `gcloud compute scp` で転送すること（チャットに値を貼らない）
+
 ## 編集時の注意
 
 - `boot.bash` は `#!/usr/bin/env bash` で書かれている。bash 4.0 以上の記法 (`[[`, `local`, `set -euo pipefail` など) を使ってよい。

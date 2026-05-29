@@ -7,11 +7,11 @@ AI秘書っす。
 - Groq API Key を取得する（無料枠あり）
   - [console.groq.com](https://console.groq.com) でアカウント作成 → API Keys → Create API Key
 
-- Slack App を作る（api.slack.com/apps）
-  - Socket Mode を有効化 → App-Level Token (`xapp-...`) を取得
-  - Bot Token Scopes: `chat:write` / `channels:history` / `groups:history` / `im:history` / `im:write`
-  - Event Subscriptions: `message.channels` / `message.im` を Subscribe
-  - Bot Token (`xoxb-...`) を取得
+- Discord アプリを作る（discord.com/developers/applications）
+  - Bot を作成 → **Message Content Intent** を有効化（Privileged Gateway Intents）
+  - Bot Token を取得
+  - 通知用 Webhook URL を取得（省略可）
+  - Bot をサーバーに招待（`bot` + `applications.commands` スコープ、`Send Messages` / `Read Message History` 権限）
 
 - 依存パッケージをインストールする
 
@@ -22,9 +22,8 @@ npm install
 - 環境変数を設定して boot.bash で起動する
 
 ```sh
-SLACK_BOT_TOKEN=xoxb-... \
-SLACK_APP_TOKEN=xapp-... \
-SLACK_NOTIFY_CHANNEL=C... \
+DISCORD_TOKEN=... \
+DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/... \
 GROQ_API_KEY=gsk_... \
 ./boot.bash
 ```
