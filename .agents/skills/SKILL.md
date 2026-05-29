@@ -11,7 +11,7 @@
 
 | スキル | 説明 |
 |---|---|
-| 会話継続 | チャンネルごとにセッション内の会話履歴を保持して Groq に渡す |
+| 会話継続 | チャンネルごとにセッション内の会話履歴を保持して OpenAI に渡す |
 | セッション保存 | 発言のたびに `sessions/YYYY-MM-DD_HH-MM-SS.json` へ追記 |
 | 再起動通知 | `boot.bash` が起動・再起動イベントを Discord Webhook に通知 |
 | マルチチャンネル | 複数チャンネルを1プロセスで処理し、チャンネルごとに会話を分離 |
@@ -29,11 +29,11 @@ SYSTEM_PROMPT="あなたはコードレビュー専門のAIです。" ./boot.bas
 
 #### モデルを切り替える
 
-`GROQ_MODEL` 環境変数で指定。デフォルトは `llama-3.3-70b-versatile`。
+`OPENAI_MODEL` 環境変数で指定。デフォルトは `gpt-4o-mini`。
 
 ```sh
-GROQ_MODEL=llama-3.1-8b-instant ./boot.bash   # より高速・軽量
-GROQ_MODEL=mixtral-8x7b-32768 ./boot.bash     # コンテキスト長重視
+OPENAI_MODEL=gpt-4o ./boot.bash        # より高性能
+OPENAI_MODEL=gpt-4o-mini ./boot.bash   # 高速・低コスト（デフォルト）
 ```
 
 #### コマンドを追加する (`bot.js`)
@@ -65,10 +65,8 @@ if (!message.mentions.has(client.user)) return;
 セッション終了後に以下を行う。
 
 1. `.agents/logs/YYYY-MM-DD_HH-MM-SS.md` と `.json` を作成（詳細ログ）
-2. `.agents/RECENT.md` を上書き（現状スナップショット・次セッションへの申し送り）
 
 Markdown ログは人間向け（会話ログ・変更一覧・技術メモ）、JSON はツール向け（構造化データ）。
-RECENT.md は過去を積み上げず、常に最新状態で上書きする。
 
 ### ドキュメントを更新する順序
 
@@ -81,7 +79,7 @@ RECENT.md は過去を積み上げず、常に最新状態で上書きする。
 - `#!/usr/bin/env bash`、`set -euo pipefail` 必須。bash 4.0 以上の記法 (`[[`, `local`, 配列など) を積極的に使ってよい。
 - 認証情報は環境変数経由のみ。スクリプト内のデフォルト値はダミー文字列にとどめる。
 - Discord Webhook 通知は `curl` で JSON を `-d` 送信。`Content-Type: application/json` ヘッダ必須。
-- Slack のような form-encoded 方式（`--data-urlencode`）は使わない。
+- form-encoded 方式（`--data-urlencode`）は使わない。Discord Webhook は JSON POST のみ。
 
 ### Discord Bot のセットアップ手順
 
@@ -104,7 +102,7 @@ RECENT.md は過去を積み上げず、常に最新状態で上書きする。
 |---|---|---|
 | 〜五世 | Telegram | Claude |
 | 六世（初期） | Slack (Socket Mode) | OpenAI → Groq |
-| 六世（現在） | Discord (Gateway) | Groq |
+| 六世（現在） | Discord (Gateway) | OpenAI (ChatGPT) |
 
 ---
 
