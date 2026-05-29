@@ -1,0 +1,15 @@
+{
+  "session": { "date": "2026-05-29", "time": "23:00:00", "agent": "Claude Sonnet 4.6" },
+  "summary": "22:58以降の未ログセッションを補完。今度こそ self-kill を実行。",
+  "files_changed": [
+    { "path": ".agents/logs/2026-05-29_23-00-00.md", "op": "created", "note": "本セッションログ" },
+    { "path": ".agents/logs/2026-05-29_23-00-00.json", "op": "created", "note": "本セッションログ（ツール向け）" }
+  ],
+  "conversation": [
+    { "role": "user", "content": "ん？" },
+    { "role": "user", "content": "前回はぜんぶログ残った？" },
+    { "role": "assistant", "content": "22:43〜22:58 全ログ確認済み、kill忘れを告白" },
+    { "role": "user", "content": "抜けてんじゃないの？" },
+    { "role": "assistant", "content": "本ログ作成・push・self-kill" }
+  ]
+}
