@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 
 const SESSIONS_DIR = path.join(__dirname, 'sessions');
-const MODEL = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+const MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
 const SYSTEM_PROMPT = process.env.SYSTEM_PROMPT || 'あなたは親切で有能なAIアシスタントです。';
 const MAX_HISTORY = parseInt(process.env.MAX_HISTORY || '50', 10);
 
@@ -21,8 +21,7 @@ const client = new Client({
 });
 
 const openai = new OpenAI({
-  apiKey: process.env.GROQ_API_KEY,
-  baseURL: 'https://api.groq.com/openai/v1',
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 if (!fs.existsSync(SESSIONS_DIR)) fs.mkdirSync(SESSIONS_DIR, { recursive: true });

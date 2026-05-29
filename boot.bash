@@ -3,7 +3,7 @@ set -euo pipefail
 
 export DISCORD_TOKEN="${DISCORD_TOKEN:-}"
 export DISCORD_WEBHOOK_URL="${DISCORD_WEBHOOK_URL:-}"
-export GROQ_API_KEY="${GROQ_API_KEY:-gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}"
+export OPENAI_API_KEY="${OPENAI_API_KEY:-sk-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}"
 
 notify_discord() {
   local text="$1"

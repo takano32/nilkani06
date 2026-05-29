@@ -6,14 +6,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## プロジェクト概要
 
-「ニルカニちゃん六世」は、Discord Bot 経由で Groq API (Llama) を常時稼働させるための極小ラッパー。`bot.js` が Discord Gateway でメッセージを受信し、Groq API を呼んで返信する。`boot.bash` がクラッシュ時の再起動ループと Discord Webhook への起動通知を担当する。
+「ニルカニちゃん六世」は、Discord Bot 経由で OpenAI API (ChatGPT) を常時稼働させるための極小ラッパー。`bot.js` が Discord Gateway でメッセージを受信し、OpenAI API を呼んで返信する。`boot.bash` がクラッシュ時の再起動ループと Discord Webhook への起動通知を担当する。
 
 ## 起動方法
 
 ```sh
 DISCORD_TOKEN=... \
 DISCORD_WEBHOOK_URL=https://discord.com/api/webhooks/... \
-GROQ_API_KEY=gsk_... \
+OPENAI_API_KEY=sk-... \
 ./boot.bash
 ```
 
@@ -29,7 +29,7 @@ GROQ_API_KEY=gsk_... \
   - **Message Content Intent**（Privileged Gateway Intents）
   - **Server Members Intent**（任意）
 - Bot をサーバーに招待する際は `bot` + `applications.commands` スコープと `Send Messages` / `Read Message History` 権限を付与する。
-- 環境変数 `DISCORD_TOKEN` / `DISCORD_WEBHOOK_URL` / `GROQ_API_KEY` を実際の値に置換する。
+- 環境変数 `DISCORD_TOKEN` / `DISCORD_WEBHOOK_URL` / `OPENAI_API_KEY` を実際の値に置換する。
 
 ## 環境変数
 
@@ -37,8 +37,8 @@ GROQ_API_KEY=gsk_... \
 |---|---|
 | `DISCORD_TOKEN` | Discord Bot Token |
 | `DISCORD_WEBHOOK_URL` | 起動通知を送る Webhook URL（省略可） |
-| `GROQ_API_KEY` | Groq API Key (`gsk_...`) |
-| `GROQ_MODEL` | 使用モデル（省略時: `llama-3.3-70b-versatile`） |
+| `OPENAI_API_KEY` | OpenAI API Key (`sk-...`) |
+| `OPENAI_MODEL` | 使用モデル（省略時: `gpt-4o-mini`） |
 | `SYSTEM_PROMPT` | システムプロンプト（省略時: デフォルト文言） |
 | `MAX_HISTORY` | LLM に渡すチャンネルごとの最大メッセージ数（省略時: `50`） |
 

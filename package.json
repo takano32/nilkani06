@@ -1,7 +1,7 @@
 {
   "name": "nilkanichan",
   "version": "1.0.0",
-  "description": "Discord + Groq (Llama) bot wrapper",
+  "description": "Discord + OpenAI (ChatGPT) bot wrapper",
   "main": "bot.js",
   "scripts": {
     "start": "node bot.js"
